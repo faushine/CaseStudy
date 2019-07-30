@@ -18,7 +18,7 @@ package com.ECE654.errorprone;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 /** @author mariasam@google.com (Maria Sam) on 7/10/17. */
-class ThreadJoinLoopPositiveCases1 {
+class ThreadJoinLoopPositiveCases {
 
   public void basicCase(Thread thread) {
     Uninterruptibles.joinUninterruptibly(thread);

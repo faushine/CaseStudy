@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /** @author awturner@google.com (Andy Turner) */
-class UnnecessaryBoxedVariableCases_expected {
+class UnnecessaryBoxedVariableCases {
   void positive_local() {
     int i = 0;
   }

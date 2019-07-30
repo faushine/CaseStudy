@@ -17,31 +17,36 @@
 package com.ECE654.errorprone;
 
 /** @author hanuszczak@google.com (Łukasz Hanuszczak) */
-class UngroupedOverloadsRefactoringInterleaved {
+class UngroupedOverloadsRefactoringMultiple {
 
   public void foo() {}
 
   public void foo(int x) {}
 
+  private static class foo {}
+
   public void foo(int x, int y) {}
-
-  public void foo(int x, int y, int z) {}
-
-  public void baz() {}
-
-  public void baz(int x) {}
-
-  public void baz(int x, int y) {}
 
   public void bar() {}
 
-  public void bar(int x) {}
+  public static final String BAZ = "baz";
 
-  public void bar(int x, int y) {}
+  public void foo(int x, int y, int z) {}
 
   public void quux() {}
 
   public void quux(int x) {}
 
+  public static final int X = 0;
+  public static final int Y = 1;
+
   public void quux(int x, int y) {}
+
+  private int quux;
+
+  public void norf() {}
+
+  public void quux(int x, int y, int z) {}
+
+  public void thud() {}
 }

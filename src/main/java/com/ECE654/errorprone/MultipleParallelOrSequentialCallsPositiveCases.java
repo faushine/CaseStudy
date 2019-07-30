@@ -20,82 +20,82 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /** @author @mariasam (Maria Sam) on 7/6/17. */
-class MultipleParallelOrSequentialCallsPositiveCases1 {
+class MultipleParallelOrSequentialCallsPositiveCases {
 
   public void basicCaseParallel(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'list.stream().parallel();'?
-    list.stream().parallel();
+    list.stream().parallel().parallel();
   }
 
   public void basicCaseParallelNotFirst(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'list.stream().parallel().map(m -> m);'?
-    list.stream().parallel().map(m -> m);
+    list.stream().map(m -> m).parallel().parallel();
   }
 
   public void basicCollection(Collection<String> list) {
     // BUG: Diagnostic contains: Did you mean 'list.stream().parallel();'?
-    list.stream().parallel();
+    list.stream().parallel().parallel();
   }
 
   public void parallelStream(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'list.parallelStream();'?
-    list.parallelStream();
+    list.parallelStream().parallel().parallel();
   }
 
   public void basicCaseParallelThisInMethodArg(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'this.hello(list.stream().parallel());'?
-    this.hello(list.stream().parallel());
+    this.hello(list.stream().parallel().parallel());
   }
 
   public void onlyOneError(List<String> list) {
     this.hello(
         // BUG: Diagnostic contains: Multiple calls
-        list.stream().parallel());
+        list.stream().parallel().parallel());
   }
 
   public void mapMethod(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'hello(list.stream().parallel().map(m ->
     // this.hello(null)));'?
-    hello(list.stream().parallel().map(m -> this.hello(null)));
+    hello(list.stream().map(m -> this.hello(null)).parallel().parallel());
   }
 
   public void betweenMethods(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'list.stream().parallel().map(m -> m.toString());'?
-    list.stream().parallel().map(m -> m.toString());
+    list.stream().parallel().map(m -> m.toString()).parallel();
   }
 
   public void basicCaseParallelNotLast(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'list.stream().parallel().map(m ->
     // m.toString()).findFirst();'?
-    list.stream().parallel().map(m -> m.toString()).findFirst();
+    list.stream().parallel().map(m -> m.toString()).parallel().findFirst();
   }
 
   public void basicCaseSequential(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'list.stream().sequential().map(m -> m.toString());'?
-    list.stream().sequential().map(m -> m.toString());
+    list.stream().sequential().map(m -> m.toString()).sequential();
   }
 
   public void bothSequentialAndParallel(List<String> list) {
     // this case is unlikely (wrong, even) but just checking that this works
     // BUG: Diagnostic contains: Did you mean 'list.stream().sequential().parallel();'?
-    list.stream().sequential().parallel();
+    list.stream().sequential().parallel().sequential();
   }
 
   public void bothSequentialAndParallelMultiple(List<String> list) {
     // this is even more messed up, this test is here to make sure the checker doesn't throw an
     // exception
     // BUG: Diagnostic contains: Multiple calls
-    list.stream().sequential().parallel().parallel();
+    list.stream().sequential().parallel().sequential().parallel();
   }
 
   public void parallelMultipleLines(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'list.stream().parallel()
-    list.stream().parallel().map(m -> m.toString());
+    list.stream().parallel().map(m -> m.toString()).parallel();
   }
 
   public void multipleParallelCalls(List<String> list) {
     // BUG: Diagnostic contains: Did you mean 'list.parallelStream();'?
-    list.parallelStream();
+    list.parallelStream().sequential();
   }
 
   public String hello(Stream st) {
@@ -104,19 +104,24 @@ class MultipleParallelOrSequentialCallsPositiveCases1 {
 
   public void streamWithinAStream(List<String> list, List<String> list2) {
     // BUG: Diagnostic contains: Did you mean
-    list.stream().parallel().flatMap(childDir -> list2.stream()).flatMap(a -> list2.stream());
+    list.stream()
+        .flatMap(childDir -> list2.stream())
+        .parallel()
+        .flatMap(a -> list2.stream())
+        .parallel();
   }
 
   public void streamWithinAStreamImmediatelyAfterOtherParallel(
       List<String> list, List<String> list2) {
     // BUG: Diagnostic contains: Did you mean
-    list.stream().parallel().map(m -> list2.stream().parallel());
+    list.stream().parallel().map(m -> list2.stream().parallel()).parallel();
   }
 
   public void parallelAndNestedStreams(List<String> list, List<String> list2) {
     // BUG: Diagnostic contains: Did you mean
     list.parallelStream()
         .flatMap(childDir -> list2.stream())
+        .parallel()
         .filter(m -> (new TestClass("test")).testClass())
         .map(
             a -> {
@@ -126,7 +131,8 @@ class MultipleParallelOrSequentialCallsPositiveCases1 {
               return null;
             })
         .filter(a -> a != null)
-        .flatMap(a -> list2.stream());
+        .flatMap(a -> list2.stream())
+        .parallel();
   }
 
   private class TestClass {
